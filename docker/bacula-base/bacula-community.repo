@@ -1,6 +1,2 @@
-[Bacula-Community]
-name=CentOS - Bacula - Community
-baseurl=https://www.bacula.org/packages/BACULA_KEY/rpms/BACULA_VERSION/el7/
-enabled=1
-protect=0
-gpgcheck=0
+# Bacula Community
+deb https://www.bacula.org/packages/670fdff72b048/debs/BACULA_VERSION/ DEBIAN_VERSION main

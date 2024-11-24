@@ -1,34 +1,19 @@
-FROM centos:7
+FROM debian:bookworm
 
-MAINTAINER Eduardo Fraga <eduardo.fraga@fametec.com.br>
+ENV DEBIAN_VERSION=bookworm
 
-ENV BACULA_VERSION 11.0.5
+ENV BACULA_VERSION=15.0.2
 
 # get your key on: https://www.bacula.org/bacula-binary-package-download/
-ENV BACULA_KEY 5cee4d079821e
 
-ENV EMAIL suporte@fametec.com.br
+ENV EMAIL=yu.grebenschikov@rko-group.ru
 
-RUN rpm --import https://www.bacula.org/downloads/Bacula-4096-Distribution-Verification-key.asc
+RUN apt-get update && apt-get install -y wget gnupg2 \
+	&& wget https://www.bacula.org/downloads/Bacula-4096-Distribution-Verification-key.asc \
+	&& apt-key add Bacula-4096-Distribution-Verification-key.asc
 
-COPY bacula-community.repo /etc/yum.repos.d/bacula-community.repo
+COPY bacula-community.repo /etc/apt/sources.list.d/Bacula-Community.list
 
-RUN sed -i s/BACULA_VERSION/$(echo $BACULA_VERSION)/g /etc/yum.repos.d/bacula-community.repo \
-  && sed -i s/BACULA_KEY/$(echo $BACULA_KEY)/g /etc/yum.repos.d/bacula-community.repo
-
-RUN rpm -i https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
-
-RUN yum -y install epel-release
-
-# RUN dnf -y install postgresql \
-RUN yum -y install \
-	postgresql10 \
-	zip \
-	bzip2 \
-	mtx 
-
-RUN yum install -y bacula-postgresql-$BACULA_VERSION --exclude=bacula-mysql
-
-RUN yum -y clean all && rm -rf /var/cache/yum
-
-RUN for i in `ls /opt/bacula/bin`; do ln -s /opt/bacula/bin/$i /usr/sbin/$i; done 
+RUN sed -i s/BACULA_VERSION/$(echo $BACULA_VERSION)/g /etc/apt/sources.list.d/Bacula-Community.list \
+	&& sed -i s/DEBIAN_VERSION/$(echo $DEBIAN_VERSION)/g /etc/apt/sources.list.d/Bacula-Community.list \
+	&& apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y postgresql postgresql-client bacula-postgresql 
