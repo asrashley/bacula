@@ -1,4 +1,4 @@
-FROM fametec/bacula-base:11.0.5 AS base
+FROM Bertrezen/bacula-base:15.0.2 AS base
 
 FROM postgres:10
 
@@ -17,9 +17,9 @@ COPY --from=base /opt/bacula/scripts/make_postgresql_tables /docker-entrypoint-i
 COPY --from=base /opt/bacula/scripts/grant_postgresql_privileges /docker-entrypoint-initdb.d/grant_postgresql_privileges
 
 RUN { \
-	echo '#!/bin/bash'; \
-	echo 'sh /docker-entrypoint-initdb.d/make_postgresql_tables --username=$POSTGRES_USER'; \
-	echo 'sh /docker-entrypoint-initdb.d/grant_postgresql_privileges --username=$POSTGRES_USER'; \
+    echo '#!/bin/bash'; \
+    echo 'sh /docker-entrypoint-initdb.d/make_postgresql_tables --username=$POSTGRES_USER'; \
+    echo 'sh /docker-entrypoint-initdb.d/grant_postgresql_privileges --username=$POSTGRES_USER'; \
 } >> /docker-entrypoint-initdb.d/deploy_database.sh \
 && chmod +x /docker-entrypoint-initdb.d/deploy_database.sh \
 && chown postgres. /docker-entrypoint-initdb.d/deploy_database.sh
@@ -31,4 +31,3 @@ RUN chown -R postgres. /docker-entrypoint-initdb.d/*
 VOLUME ["/var/lib/postgresql/data"]
 
 EXPOSE 5432/tcp
-

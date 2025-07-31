@@ -1,6 +1,4 @@
-FROM fametec/bacula-base:11.0.5
-
-MAINTAINER eduardo@fametec.com.br
+FROM Bertrezen/bacula-base:15.0.2
 
 VOLUME ["/opt/bacula/etc"]
 

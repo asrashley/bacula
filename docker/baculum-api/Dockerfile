@@ -1,4 +1,4 @@
-FROM fametec/bacula-base:11.0.5
+FROM Bertrezen/bacula-base:15.0.2
 
 MAINTAINER eduardo@fametec.com.br
 
@@ -7,7 +7,7 @@ RUN rpm --import https://www.bacula.org/downloads/baculum/baculum.pub
 COPY baculum.repo /etc/yum.repos.d/baculum.repo
 
 RUN yum install -y \
-	epel-release \
+    epel-release \
         yum-utils
 
 RUN yum install -y http://rpms.remirepo.net/enterprise/remi-release-7.rpm
@@ -15,14 +15,14 @@ RUN yum install -y http://rpms.remirepo.net/enterprise/remi-release-7.rpm
 RUN yum-config-manager --enable remi-php73
 
 RUN yum install -y \
-	sudo \
-	php-fpm \
-	baculum-common \
-	baculum-api \
-	baculum-api-httpd \
-	supervisor
+    sudo \
+    php-fpm \
+    baculum-common \
+    baculum-api \
+    baculum-api-httpd \
+    supervisor
 
-COPY sudoers-baculum /etc/sudoers.d/sudoers-baculum 
+COPY sudoers-baculum /etc/sudoers.d/sudoers-baculum
 
 COPY timezone.ini /etc/php.d/timezone.ini
 
