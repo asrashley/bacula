@@ -1,13 +1,6 @@
-FROM Bertrezen/bacula-base:15.0.2
+FROM bacularis/bacularis-api-sd:5.4.0-alpine
+ARG BACULA_GID
+ARG BACULA_UID
 
-RUN yum install -y bacula-cloud-storage --exclude=bacula-mysql
-
-RUN for i in `ls /opt/bacula/bin`; do if test -z /usr/sbin/$i; then ln -s /opt/bacula/bin/$i /usr/sbin/$i; fi; done
-
-VOLUME ["/opt/bacula/etc"]
-
-EXPOSE 9103/tcp
-
-ENTRYPOINT ["bacula-sd"]
-
-CMD ["-f", "-c", "/opt/bacula/etc/bacula-sd.conf"]
+RUN sed --in-place "s/^bacula:x:102:/bacula:x:${BACULA_GID}:/" /etc/group
+RUN sed --in-place "s/^bacula:x:101:102:/bacula:x:${BACULA_UID}:${BACULA_GID}:/" /etc/passwd
