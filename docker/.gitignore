@@ -4,4 +4,5 @@ etc/baculum/Config-web-apache/session.dump
 config/api/bacularis.users
 config/web/hosts.conf
 config/web/bacularis.users
+etc/clientdefs/*.conf
 logs
