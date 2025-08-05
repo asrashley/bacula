@@ -1,12 +1,18 @@
 services:
   base:
-    build: bacula-base/
-    image: Bertrezen/bacula-base:15.0.2
+    build:
+      context: ./bacula-base
+      args:
+        - BACULA_VERSION=${BACULA_VERSION:-15.0.2}
+        - BACULA_KEY=${BACULA_KEY:-670fdff72b048}
+    image: asrashley/bacula-base:15.0.2
 
-  db:
+  bacula-db:
     build: bacula-catalog/
-    image: Bertrezen/bacula-catalog:15.0.2
+    image: asrashley/bacula-catalog:15.0.2
     restart: unless-stopped
+    depends_on:
+      - base
     environment:
       POSTGRES_PASSWORD: bacula
       POSTGRES_USER: bacula
@@ -15,119 +21,108 @@ services:
       - pgdata:/var/lib/postgresql/data:rw
     networks:
       - bacnet
+    dns: ${DNS_SERVER}
+    dns_search: ${DNS_SEARCH}
+    domainname: bacula-db
     ports:
-      - 5432:5432
+      - 5432:5432/tcp
 #
   bacula-dir:
     build: bacula-dir/
-    image: Bertrezen/bacula-director:15.0.2
+    image: asrashley/bacula-director:15.0.2
     restart: unless-stopped
     volumes:
       - ./etc:/opt/bacula/etc:ro
+      - ./working/dir:/opt/bacula/working:rw
+      - ./logs/dir:/opt/log:rw
+      - /sabrent/bacula/bootstrap:/var/lib/bacula/archive:rw
     depends_on:
-      - db
+      - base
+      - bacula-db
     networks:
       - bacnet
+    links:
+      - bacula-db
+    dns: ${DNS_SERVER}
+    dns_search: ${DNS_SEARCH}
+    domainname: bacula-dir
     ports:
-      - 9101:9101
+      - 9101:9101/tcp
 #
   bacula-sd:
-    build: bacula-sd/
-    image: Bertrezen/bacula-storage:15.0.2
+    build:
+      context: ./bacula-sd
+      args:
+        - BACULA_GID=${BACULA_GID}
+        - BACULA_UID=${BACULA_UID}
+    image: asrashley/bacularis-api-sd:15.0.2
     restart: unless-stopped
     volumes:
-      - ./etc:/opt/bacula/etc:ro
+      - ./etc:/etc/bacula:rw
       - /sabrent/bacula:/store:rw
+      - ./logs/api:/var/www/bacularis/protected/vendor/bacularis/bacularis-api/API/Logs:rw
+      - ./config/api:/var/www/bacularis/protected/vendor/bacularis/bacularis-api/API/Config:rw
+      - ./working/api:/var/www/bacularis/protected/vendor/bacularis/bacularis-common/Common/Working:rw
+      - ./working/sd:/var/lib/bacula:rw
+      - /export/restores:/restores:rw
     networks:
       - bacnet
+    dns: ${DNS_SERVER}
+    dns_search: ${DNS_SEARCH}
+    links:
+      - bacula-db
     ports:
-      - 9103:9103
+      - 9097:9097/tcp
+      - 192.168.96.1:9103:9103/tcp
 #
-#  bacula-fd:
-#    build: bacula-fd/
-#    image: Bertrezen/bacula-client:15.0.2
-#    restart: unless-stopped
-#    depends_on:
-#      - bacula-sd
-#      - bacula-dir
-#      - db
-#    volumes:
-#      - ./etc:/opt/bacula/etc:ro
-#    networks:
-#      - bacnet
-#    ports:
-#      - 9102:9102
-#
-  baculum-api:
-    build: baculum-api/
-    image: Bertrezen/baculum-api:15.0.2
+  bacula-fd:
+    build:
+      context: ./bacula-fd
+      args:
+        - BACULA_GID=${BACULA_GID}
+        - BACULA_UID=${BACULA_UID}
+    image: asrashley/bacula-client:15.0.2
     restart: unless-stopped
     depends_on:
-      - db
+      - base
       - bacula-dir
     volumes:
-      - ./etc/bconsole.conf:/opt/bacula/etc/bconsole.conf:ro
-      - ./etc/baculum:/etc/baculum:rw
+      - ./etc:/opt/bacula/etc:ro
+      - ./working/dir:/opt/bacula/working:rw
+      - /sabrent/bacula/bootstrap:/var/lib/bacula/archive:rw
     networks:
       - bacnet
-    ports:
-      - 9096:9096
-
 #
-  baculum-web:
-    build: baculum-web/
-    image: Bertrezen/baculum-web:15.0.2
+  bacula-web:
+    build: bacula-web
+    image: asrashley/bacularis-web:5.4.0-alpine
     restart: unless-stopped
     depends_on:
-      - baculum-api
+      - bacula-dir
+      - bacula-sd
     volumes:
-      - ./etc/bconsole.conf:/opt/bacula/etc/bconsole.conf:ro
-      - ./etc/baculum:/etc/baculum:rw
+      - ./etc:/etc/bacula:ro
+      - ./config/web:/var/www/bacularis/protected/vendor/bacularis/bacularis-web/Web/Config:rw
+      - ./config/web:/var/www/bacularis/protected/Web/Config:rw
+      - ./logs/web:/var/www/bacularis/protected/vendor/bacularis/bacularis-web/Web/Logs:rw
+      - ./working/web:/var/www/bacularis/protected/vendor/bacularis/bacularis-common/Common/Working
     networks:
       - bacnet
+    links:
+      - bacula-db
+      - bacula-dir
+      - bacula-sd
+    dns: ${DNS_SERVER}
+    dns_search: ${DNS_SEARCH}
     ports:
-      - 9095:9095
-
-#
-#volumes:
-#  pgdata:
-#
-#  gmail:
-#    image: Bertrezen/postfix:gmail
-#    restart: unless-stopped
-#    depends_on:
-#      - bacula-dir
-#    # ports:
-#    #  - 30025:25
-#    environment:
-#      GMAIL_USER: xxxxxxxx
-#      GMAIL_PASS: xxxxxxxx
-#
-#  smtp2tg:
-#    image: b3vis/docker-smtp2tg
-#    restart: unless-stopped
-#    volumes:
-#      - ./etc/smtp2tg.toml:/config/smtp2tg.toml:ro
-#    #    ports:
-#    #  - "31025:25"
-#    depends_on:
-#      - bacula-dir
-#
-#
-#volumes:
-#  pgdata:
+      - 192.168.96.1:9098:9097/tcp
 volumes:
   pgdata:
-    name: export/docker/bacula15-pg10
-    driver: TrilliumIT/zfs:2.0
+    name: bacula15-pg10
+    driver: icefo/docker-volume-zfs-plugin:2.2
     driver_opts:
         compression: zstd
         recordsize: 16k
-  webdata:
-    name: export/docker/bacula-web
-    driver: TrilliumIT/zfs:2.0
-    driver_opts:
-        compression: zstd
 networks:
   bacnet:
     driver: bridge
