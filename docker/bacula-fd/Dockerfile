@@ -9,6 +9,8 @@ RUN groupmod --gid ${BACULA_GID} bacula \
     && usermod --uid $BACULA_UID --gid $BACULA_GID bacula
 RUN mkdir -p /run/bacula && chown bacula /run/bacula
 
-ENTRYPOINT ["bacula-fd"]
+ENTRYPOINT ["/opt/bacula/bin/bacula-fd"]
 
 CMD ["-f", "-c", "/opt/bacula/etc/bacula-fd.conf"]
+
+EXPOSE 9102/tcp
