@@ -1,0 +1,88 @@
+#!/bin/sh
+cat << __EOC__
+$ ./configure  '--with-postgresql'
+
+Configuration on Thu Jul 31 15:57:03 BST 2025:
+
+   Host:                      x86_64-pc-linux-gnu -- ubuntu 22.04
+   Bacula version:            Bacula 15.0.2 (21 March 2024)
+   Source code location:      .
+   Install binaries:          /sbin
+   Install libraries:         /usr/lib64
+   Install config files:      /etc/bacula
+   Scripts directory:         /etc/bacula
+   Archive directory:         /tmp
+   Working directory:         /opt/bacula/working
+   PID directory:             /var/run
+   Subsys directory:          /var/lock/subsys
+   Man directory:             /usr/share/man
+   Data directory:            /usr/share
+   Plugin directory:          /usr/lib64
+   C Compiler:                gcc 11.4.0-1ubuntu1~22.04)
+   C++ Compiler:              /usr/bin/g++ 11.4.0-1ubuntu1~22.04)
+   Compiler flags:             -g -O2 -Wall -x c++ -fno-strict-aliasing -fno-exceptions -fno-rtti
+   Linker flags:               
+   Libraries:                 -lpthread 
+   Statically Linked Tools:   no
+   Statically Linked FD:      no
+   Statically Linked SD:      no
+   Statically Linked DIR:     no
+   Statically Linked CONS:    no
+   Database backends:         PostgreSQL
+   Database port:              
+   Database name:             bacula
+   Database user:             bacula
+   Database SSL options:      
+
+   Job Output Email:          root@localhost
+   Traceback Email:           root@localhost
+   SMTP Host Address:         localhost
+
+   Director Port:             9101
+   File daemon Port:          9102
+   Storage daemon Port:       9103
+
+   Director User:             
+   Director Group:            
+   Storage Daemon User:       
+   Storage DaemonGroup:       
+   File Daemon User:          
+   File Daemon Group:         
+
+   Large file support:        yes
+   Bacula conio support:      yes -ltinfo
+   readline support:          no 
+   TCP Wrappers support:      no 
+   TLS support:               yes
+   Encryption support:        yes
+   ZLIB support:              yes
+   LZO support:               no
+   S3 support:                no
+   LIBCAP support: 	     no
+   ZSTD support:             no
+   enable-smartalloc:         yes
+   enable-lockmgr:            no
+   bat support:               no
+   client-only:               no
+   build-dird:                yes
+   build-stored:              yes
+   Plugin support:            yes
+   LDAP support:              no
+   LDAP StartTLS support:     no
+   AFS support:               no
+   ACL support:               no
+   XATTR support:             yes
+   GPFS support:              no 
+   systemd support:           no 
+   Batch insert enabled:      PostgreSQL
+
+   Plugins:
+   - Docker:                  yes
+   - Kubernetes:              
+   - LDAP BPAM:               no
+   - TOTP BPAM:               no
+   - CDP:                     auto
+   - Antivirus:               no
+   - aws:                     no
+  
+__EOC__

@@ -1,0 +1,4 @@
+USER=root
+PROGRAM=/sbin/bat
+SESSION=true
+FALLBACK=true

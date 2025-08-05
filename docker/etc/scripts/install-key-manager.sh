@@ -1,0 +1,161 @@
+#!/bin/sh
+#
+# Copyright (C) 2023 Bacula Systems SA
+# License: BSD 2-Clause; see file LICENSE-FOSS
+#
+# This script setup a "master-key" for the volume encryption on the SD
+#
+
+# tell where GNUPG will work (usually in /opt/bacula/etc/gnupg)
+GNUPGHOME="/etc/bacula/gnupg"
+KEYMAN_CONF="/etc/bacula/key-manager.conf"
+
+#############################################################################
+#
+# usage
+#
+#############################################################################
+usage()
+{
+   echo "$0 [ check | install ]"
+   echo "setup a master key for the key-manager"
+   exit 1
+}
+
+#############################################################################
+#
+# check_gnupg
+#
+#############################################################################
+check_gnupg()
+{
+   # Check if GnuPG is installed
+   GNUPGBIN=`which gpg`
+   if [ -z "$GNUPGBIN" ] ; then
+      echo "GnuPG is not found or not installed" >&2
+      exit 1
+   fi
+}
+
+#############################################################################
+#
+# check
+#
+#############################################################################
+check_python_gnupg()
+{
+   # Check if the python3 API is installed for GnuPG
+   PYTHON3=`which python3`
+   if [ -z "$PYTHON3" ] ; then
+      echo "python3 is not found or not installed" >&2
+      exit 1
+   fi
+   OUT=`mktemp`
+   $PYTHON3 -c 'import gnupg;print("OK" if gnupg.GPG else "KO")' >$OUT 2>/dev/null
+   out=`cat $OUT`
+   if [ "$out" != "OK" ] ; then
+      echo "python3 gnupg module is not found" >&2
+      echo "try: pip3 install gnupg" >&2
+      exit 1
+   fi
+}
+
+#############################################################################
+#
+# check
+#
+#############################################################################
+check()
+{
+   check_gnupg
+   check_python_gnupg
+
+   if [ -e $GNUPGHOME ] ; then
+      echo "Directory \"$GNUPGHOME\" exists"
+   else
+      echo "Directory \"$GNUPGHOME\" doesn't exist"
+   fi
+   exit 0
+}
+
+#############################################################################
+#
+# install
+#
+#############################################################################
+install()
+{
+   check_gnupg
+
+   # Don't overwrite an existing configuration
+   if [ -e "$GNUPGHOME" ] ; then
+      echo "Directory \"$GNUPGHOME\" already exists, abort" >&2
+      exit 1
+   fi
+
+   mkdir $GNUPGHOME
+   chmod go-rwx $GNUPGHOME
+   export GNUPGHOME
+
+   PASSPHRASE=`openssl rand -base64 10`
+
+   GNUPG_SCRIPT=`mktemp`
+   cat > $GNUPG_SCRIPT <<EOF
+Key-Type: RSA
+Subkey-Type: RSA
+Key-length: 2048
+Subkey-Length: 2048
+Name-Real: Bacula
+Name-Email: bacula@localhost
+Expire-Date: 0
+Passphrase: $PASSPHRASE
+%commit
+%echo done
+EOF
+
+   GNUPG_OUT=`mktemp`
+   $GNUPGBIN --batch --full-gen-key $GNUPG_SCRIPT >$GNUPG_OUT 2>&1
+   if [ $? != 0 ] ; then
+      cat $GNUPG_OUT
+      rm $GNUPG_OUT
+      echo "Error with gpg" >&2
+      exit 1
+   fi
+   rm $GNUPG_SCRIPT
+
+   # retrieve the fingerprint of the key
+   fpr=`$GNUPGBIN -k --with-colons | awk -F : '$1 ~/fpr/ { print $10;exit }'`
+
+   cat >$KEYMAN_CONF <<EOF
+[DEFAULT]
+gnupghome="$GNUPGHOME"
+
+[$fpr]
+#volume_regex=Volume[0-9]+|TestVolume[0-9]+
+uid=bacula@localhost
+passphrase=$PASSPHRASE
+stealth=off
+EOF
+   if [ "$USER" = root ] || [ "$(id -u)" = 0  ]; then
+      echo change ownership to user bacula
+      chown -R bacula:bacula $KEYMAN_CONF $GNUPGHOME
+   fi
+   echo "public and private keys have been created in $GNUPGHOME"
+   echo "the key-manager configuration file is in $KEYMAN_CONF"
+   exit 0
+}
+
+operation=$1
+shift
+
+case $operation in
+   "check")
+      check
+      ;;
+   "install")
+      install
+      ;;
+   *)
+      usage
+      ;;
+esac
