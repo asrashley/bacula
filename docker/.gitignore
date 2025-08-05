@@ -2,3 +2,5 @@ working/*
 etc/baculum/Config-web-apache/session.dump
 .env
 config/api/bacularis.users
+config/web/hosts.conf
+config/web/bacularis.users
