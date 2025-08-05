@@ -1,111 +1,119 @@
-# Bacula 11.0.5 Container
+# Bacula 15.0.2 using Docker containers
 
-Deploy the bacula community edition on Docker Containers. 
+Deploys the bacula community edition using Docker Containers.
+
+This repository can be used to create and run the Docker containers
+for a Bacula server, storage daemon and the web UI [bacularis](https://bacularis.app/)
+
+If you want to use this repo, the [docker-compose.yml](./docker/docker-compose.yml)
+will need to be modified, as it makes some assumptions about my home network.
+
+In my setup there is an internal private domain `home.lan`. The host running the
+Docker containers has a CNAME alias `bacula.home.lan`. The mail server has the DNS
+name `mail.home.lan`.
 
 ## Images
 
-- [x] Bacula Catalog                    fametec/bacula-catalog:11.0.5
-- [x] Bacula Director                   fametec/bacula-director:11.0.5
-- [x] Bacula Storage Daemon             fametec/bacula-storage:11.0.5
-- [x] Bacula File Daemon                fametec/bacula-client:11.0.5
-- [x] Baculum Web Gui                   fametec/baculum-web:11.0.5 (NEW)
-- [x] Baculum API                       fametec/baculum-api:11.0.5 (NEW)
-- [x] Postfix SMTP Relay                fametec/postfix:latest
-- [x] SMTP2TG SMTP Relay to Telegram    b3vis/docker-smtp2tg
+- Base image                        asrashley/bacula-base:15.0.2
+- Bacula Catalog                    asrashley/bacula-catalog:15.0.2
+- Bacula Director                   asrashley/bacula-director:15.0.2
+- Bacularis API & Storage Daemon    asrashley/bacularis-api-sd:15.0.2
+- Bacula File Daemon                asrashley/bacula-client:15.0.2
+- Bacularis Web Gui                 asrashley/bacularis-web:5.4.0-alpine
 
-## Install Docker 
+## Install Docker
 
-    curl -sSL https://get.docker.com | bash
-    
-## Install Docker-compose
+See https://docs.docker.com/engine/install/debian/#install-using-the-repository
+for information about adding the Docker repository.
 
-    curl -L "https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-    chmod +x /usr/local/bin/docker-compose
+```sh
+sudo apt update
+sudo apt install docker-ce docker-buildx-plugin docker-compose-plugin
+```
 
-## Download and Install Bacula Container
+## First Time Setup
 
-    git clone https://github.com/fametec/bacula
-    cd bacula/docker
-    docker-compose up
+You need a package key to access the Debian repositories of Bacula
+community edition. Go to https://www.bacula.org/bacula-binary-package-download/
+to register for a key.
 
-## Tests
+```sh
+cd docker
+./first-time-setup.sh mykey
+```
 
-    docker exec -it docker_bacula-dir_1 bash
-    > bconsole
-    * 
-    
-    
-## Video
+... where `mykey` is the Bacula access key
 
-[![asciicast](https://asciinema.org/a/279317.svg)](https://asciinema.org/a/279317)
+The script will create a `.env` file that looks a bit like this:
 
+```
+BACULA_KEY=123456789abcd
+BACULA_VERSION=15.0.2
+BACULA_GID=126
+BACULA_UID=116
+```
 
-## Docker Compose
+## Build the containers
 
-docker-compose.yaml
+```sh
+docker compose build
+```
 
+If the repository key is valid, it should successfully build all of the
+conteiners.
 
-    version: '3.1'
-    services:
-      db:
-        image: fametec/bacula-catalog:11.0.5
-        restart: unless-stopped
-        environment:
-          POSTGRES_PASSWORD: bacula
-          POSTGRES_USER: bacula
-          POSTGRES_DB: bacula
-        volumes:
-        - pgdata:/var/lib/postgresql/data:rw
-        ports:
-          - 5432
-      bacula-dir:
-        image: fametec/bacula-director:11.0.5
-        restart: unless-stopped
-        volumes:
-          - ./etc/bacula-dir.conf:/opt/bacula/etc/bacula-dir.conf:ro
-          - ./etc/bconsole.conf:/opt/bacula/etc/bconsole.conf:ro
-        depends_on:
-          - db
-        ports:
-          - 9101
-      bacula-sd:
-        image: fametec/bacula-storage:11.0.5
-        restart: unless-stopped
-        depends_on:
-          - bacula-dir
-          - db
-        volumes:
-          - ./etc/bacula-sd.conf:/opt/bacula/etc/bacula-sd.conf:ro
-        ports:
-          - 9103
-      bacula-fd:
-        image: fametec/bacula-client:11.0.5
-        restart: unless-stopped
-        depends_on:
-          - bacula-sd
-          - bacula-dir
-        volumes:
-          - ./etc/bacula-fd.conf:/opt/bacula/etc/bacula-fd.conf:ro
-        ports:
-          - 9102
-    volumes:
-      pgdata:
+## Running the containers
 
-## Support
+```sh
+docker compose up -d
+```
 
-For technical support please contact us. 
+If all goes well, all of the services will start and a new database will have
+been created in the `bacula-db` container.
 
-suporte@fametec.com.br
+The API host should now be available on `http://localhost:9097/'. The default
+username is `admin` with password `admin`.
 
-## e-Learning 
+The web UI will need a user account to be created `http://localhost:9097/page,APIBasicUsers`
+in the API host that is used by the web host.
 
-https://www.fametec.com.br
+After setting up the API, go to `http://localhost:9098/' to perform the setup
+process for the Bacularis UI.
 
+To create configurations for clients, you can either use the Bacularis UI,
+or create new files in the [etc/clientdefs](./docker/etc/clientdefs/) directory.
+Each file must end with the `.conf` extension.
 
-## Reference
+An example client configuration `etc/clientdefs/client2.conf`:
 
-http://www.bacula.lat/community/baculum/ 
+```
+Client {
+  Name = client2-fd
+  Address = 192.168.2.3
+  FDPort = 9102
+  Catalog = MyCatalog
+  Password = "vljflvjdfoj933encdkn9cc33r"
+  File Retention = 1 month
+  Job Retention = 3 months
+  AutoPrune = yes
+}
 
-http://www.bacula.lat/community/script-instalacao-bacula-community-9-x-pacotes-oficiais/
+Job {
+  Name = "Client2"
+  JobDefs = "DefaultJob"
+  FileSet = "Full Set"
+  Client = client2-fd
+  Priority = 10
+}
 
-https://www.bacula.org/documentation/documentation/
+```
+
+The matching `Director` entry in `bacula-fd.conf`nthat is put on the client device:
+
+```
+Director {
+  Name = build-3-22-x86_64-dir
+  Password = "vljflvjdfoj933encdkn9cc33r"
+}
+
+```
