@@ -49,7 +49,7 @@ services:
       - ./etc:/opt/bacula/etc:ro
       - ./working/dir:/opt/bacula/working:rw
       - ./logs/dir:/opt/log:rw
-      - /sabrent/bacula/bootstrap:/var/lib/bacula/archive:rw
+      - /Covenant/Bacula/bootstrap:/var/lib/bacula/archive:rw
     depends_on:
       - base
       - bacula-db
@@ -75,12 +75,13 @@ services:
     restart: unless-stopped
     volumes:
       - ./etc:/etc/bacula:rw
-      - /sabrent/bacula:/store:rw
+      - /Covenant/bacula:/store:rw
       - ./logs/api:/var/www/bacularis/protected/vendor/bacularis/bacularis-api/API/Logs:rw
       - ./config/api:/var/www/bacularis/protected/vendor/bacularis/bacularis-api/API/Config:rw
       - ./working/api:/var/www/bacularis/protected/vendor/bacularis/bacularis-common/Common/Working:rw
       - ./working/sd:/var/lib/bacula:rw
-      - /export/restores:/restores:rw
+      - /Covenant/Bacula:/store:rw
+      - /restores:/restores:rw
     networks:
       - bacnet
     dns: ${DNS_SERVER}
