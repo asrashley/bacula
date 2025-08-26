@@ -3,12 +3,21 @@ services:
     build:
       context: ./bacula-base
       args:
-        - BACULA_VERSION=${BACULA_VERSION:-15.0.2}
-        - BACULA_KEY=${BACULA_KEY:-670fdff72b048}
+        BACULA_VERSION: ${BACULA_VERSION:-15.0.2}
+        BACULA_KEY: ${BACULA_KEY:-670fdff72b048}
+        BACULA_GID: ${BACULA_GID}
+        BACULA_UID: ${BACULA_UID}
+        PG_GID: ${PG_GID}
+        PG_UID: ${PG_UID}
     image: asrashley/bacula-base:15.0.2
-
+#
   bacula-db:
-    build: bacula-catalog/
+    build:
+      context: ./bacula-catalog
+      args:
+        BACULA_VERSION: ${BACULA_VERSION:-15.0.2}
+        PG_GID: ${PG_GID}
+        PG_UID: ${PG_UID}
     image: asrashley/bacula-catalog:15.0.2
     restart: unless-stopped
     depends_on:
@@ -28,7 +37,11 @@ services:
       - 5432:5432/tcp
 #
   bacula-dir:
-    build: bacula-dir/
+    build:
+      context: ./bacula-dir
+      args:
+        BACULA_GID: ${BACULA_GID}
+        BACULA_UID: ${BACULA_UID}
     image: asrashley/bacula-director:15.0.2
     restart: unless-stopped
     volumes:
@@ -53,8 +66,8 @@ services:
     build:
       context: ./bacula-sd
       args:
-        - BACULA_GID=${BACULA_GID}
-        - BACULA_UID=${BACULA_UID}
+        - BACULA_GID=${BACULA_GID:-1005}
+        - BACULA_UID=${BACULA_UID:-116}
     image: asrashley/bacularis-api-sd:15.0.2
     restart: unless-stopped
     volumes:
@@ -79,8 +92,8 @@ services:
     build:
       context: ./bacula-fd
       args:
-        - BACULA_GID=${BACULA_GID}
-        - BACULA_UID=${BACULA_UID}
+        - BACULA_GID=${BACULA_GID:-1005}
+        - BACULA_UID=${BACULA_UID:-116}
     image: asrashley/bacula-client:15.0.2
     restart: unless-stopped
     depends_on:
