@@ -88,6 +88,9 @@ in the API host that is used by the web host.
 After setting up the API, go to `http://localhost:9098/' to perform the setup
 process for the Bacularis UI.
 
+
+## Creating backup clients
+
 To create configurations for clients, you can either use the Bacularis UI,
 or create new files in the [etc/clientdefs](./docker/etc/clientdefs/) directory.
 Each file must end with the `.conf` extension.
@@ -125,3 +128,42 @@ Director {
 }
 
 ```
+
+## Backup summary reports
+
+To enable a summary email once all jobs for the day have completed, create a
+file `etc/scripts/baculabackupreport.ini`. An example `baculabackupreport.ini` file:
+
+```
+[DEFAULT]
+time = 24
+server = Bacula Server
+email = snoopy@doghouse.local
+smtpserver = my.smtp.server
+
+[baculabackupreport]
+dbtype = pgsql
+dbhost = bacula-db
+dbuser = bacula
+dbpass = bacula
+time = 48
+server = Bacula-15 docker container
+always_fail_jobs_threshold = 4
+webgui = baculum
+webguisvc = http
+webguihost = 192.168.169.170
+webguiport = 80
+urlifyalljobs = True
+verified_job_name_col = both
+copied_migrated_job_name_col = both
+```
+
+The `email` setting should be set to the email account you want to show as the sender
+of the summary reports.
+
+The `smtpserver` setting is the hostname or IP address of an smtp server that can deliver
+the email.
+
+The `webguihost` setting should be set to the hostname or IP address of the bacula
+web container, as seen from the host or devices on the local network. It is used by the
+report generator to create HTTP links to the bacula-web container.

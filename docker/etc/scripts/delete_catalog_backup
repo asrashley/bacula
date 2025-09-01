@@ -19,7 +19,7 @@ rm -f /opt/bacula/working/${db_name}.sql
 #${exec_prefix}/bin/bsmtp -h %smtp-server% -s "catalog.bsr" \
 #   %your-name@company.org% </opt/bacula/bsr/catalog.bsr
 #
-# The following script will email a summary of the backup jobs that
-#  were completed in the last 24 hours
-#/etc/bacula/baculabackupreport 24
+# The following script will email a summary of the backup jobs
+# see baculabackupreport.ini for its settings
+/opt/bacula/etc/scripts/baculabackupreport
 #

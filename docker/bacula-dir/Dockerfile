@@ -6,7 +6,7 @@ VOLUME ["/opt/bacula/etc"]
 
 RUN mkdir -p /run/bacula
 
-RUN apt install -y dnsutils
+RUN apt install -y dnsutils python3 python3-psycopg2
 
 RUN groupmod --gid ${BACULA_GID} bacula \
     && usermod --uid ${BACULA_UID} --gid ${BACULA_GID} bacula

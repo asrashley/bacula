@@ -1,2 +1,7 @@
-echo     Visit https://github.com/waa/baculabackupreport to get the current version
-echo     of this very good reporting tool. A must have for all Bacula sysadmin.
+#!/bin/bash
+
+HERE=$(dirname $(readlink -f $0))
+if [ -f ${HERE}/baculabackupreport.ini ]; then
+    python3 ${HERE}/baculabackupreport.py --config ${HERE}/baculabackupreport.ini
+fi
+
