@@ -67,8 +67,10 @@ services:
     build:
       context: ./bacula-sd
       args:
-        - BACULA_GID=${BACULA_GID:-1005}
-        - BACULA_UID=${BACULA_UID:-116}
+        BACULA_GID: ${BACULA_GID}
+        BACULA_UID: ${BACULA_UID}
+        WWW_GID: ${WWW_GID}
+        WWW_UID: ${WWW_UID}
     image: asrashley/bacularis-api-sd:15.0.2
     restart: unless-stopped
     volumes:
@@ -108,7 +110,13 @@ services:
       - bacnet
 #
   bacula-web:
-    build: bacula-web
+    build:
+      context: ./bacula-web
+      args:
+        BACULA_GID: ${BACULA_GID}
+        BACULA_UID: ${BACULA_UID}
+        WWW_GID: ${WWW_GID}
+        WWW_UID: ${WWW_UID}
     image: asrashley/bacularis-web:5.4.0-alpine
     restart: unless-stopped
     depends_on:
