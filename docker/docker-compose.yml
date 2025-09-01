@@ -75,10 +75,13 @@ services:
     restart: unless-stopped
     volumes:
       - ./etc:/etc/bacula:rw
-      - /Covenant/bacula:/store:rw
-      - ./logs/api:/var/www/bacularis/protected/vendor/bacularis/bacularis-api/API/Logs:rw
-      - ./config/api:/var/www/bacularis/protected/vendor/bacularis/bacularis-api/API/Config:rw
-      - ./working/api:/var/www/bacularis/protected/vendor/bacularis/bacularis-common/Common/Working:rw
+      - ./api/logs/api:/var/www/bacularis/protected/vendor/bacularis/bacularis-api/API/Logs:rw
+      - ./api/logs/web:/var/www/bacularis/protected/vendor/bacularis/bacularis-web/Web/Logs:rw
+      - ./api/config/api:/var/www/bacularis/protected/vendor/bacularis/bacularis-api/API/Config:rw
+      - ./api/config/web:/var/www/bacularis/protected/vendor/bacularis/bacularis-web/Web/Config:rw
+      - ./api/assets:/var/www/bacularis/htdocs/assets:rw
+      - ./api/runtime:/var/www/bacularis/protected/runtime:rw
+      - ./api/working:/var/www/bacularis/protected/vendor/bacularis/bacularis-common/Common/Working:rw
       - ./working/sd:/var/lib/bacula:rw
       - /Covenant/Bacula:/store:rw
       - /restores:/restores:rw
@@ -125,10 +128,14 @@ services:
       - bacula-sd
     volumes:
       - ./etc:/etc/bacula:ro
-      - ./config/web:/var/www/bacularis/protected/vendor/bacularis/bacularis-web/Web/Config:rw
-      - ./config/web:/var/www/bacularis/protected/Web/Config:rw
-      - ./logs/web:/var/www/bacularis/protected/vendor/bacularis/bacularis-web/Web/Logs:rw
-      - ./working/web:/var/www/bacularis/protected/vendor/bacularis/bacularis-common/Common/Working
+      - ./web/config/web:/var/www/bacularis/protected/vendor/bacularis/bacularis-web/Web/Config:rw
+      - ./web/config/web:/var/www/bacularis/protected/Web/Config:rw
+      - ./web/config/api:/var/www/bacularis/protected/vendor/bacularis/bacularis-api/API/Config:rw
+      - ./web/working:/var/www/bacularis/protected/vendor/bacularis/bacularis-common/Common/Working
+      - ./web/assets:/var/www/bacularis/htdocs/assets:rw
+      - ./web/runtime:/var/www/bacularis/protected/runtime:rw
+      - ./web/logs/api:/var/www/bacularis/protected/vendor/bacularis/bacularis-api/API/Logs:rw
+      - ./web/logs/web:/var/www/bacularis/protected/vendor/bacularis/bacularis-web/Web/Logs:rw
     networks:
       - bacnet
     links:
