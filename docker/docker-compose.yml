@@ -9,6 +9,7 @@ services:
         BACULA_UID: ${BACULA_UID}
         PG_GID: ${PG_GID}
         PG_UID: ${PG_UID}
+        EMAIL: ${BACULA_EMAIL}
     image: asrashley/bacula-base:15.0.2
 #
   bacula-db:

@@ -37,6 +37,11 @@ You need a package key to access the Debian repositories of Bacula
 community edition. Go to https://www.bacula.org/bacula-binary-package-download/
 to register for a key.
 
+Two system accounts are needed on the Docker host. One for bacula and
+one for postgres. The [first-time-setup.sh](./first-time-setup.sh) will
+look for a user account `bacula` and an account called `postgres` or `mysql`.
+If they don't exist, it will create them.
+
 ```sh
 cd docker
 ./first-time-setup.sh mykey
@@ -51,6 +56,9 @@ BACULA_KEY=123456789abcd
 BACULA_VERSION=15.0.2
 BACULA_GID=126
 BACULA_UID=116
+PG_GID=124
+PG_UID=124
+EMAIL=ubuntu
 ```
 
 ## Build the containers

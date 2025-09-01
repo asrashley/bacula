@@ -5,12 +5,9 @@ ARG BACULA_GID
 ARG BACULA_UID
 ARG PG_GID
 ARG PG_UID
+ARG EMAIL
 
 ENV DEBIAN_VERSION=bookworm
-
-# get your key on: https://www.bacula.org/bacula-binary-package-download/
-
-ENV EMAIL=yu.grebenschikov@rko-group.ru
 
 RUN apt-get update && apt-get install -y curl ca-certificates wget gnupg2 \
        && wget https://www.bacula.org/downloads/Bacula-4096-Distribution-Verification-key.asc \
