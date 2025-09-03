@@ -1,82 +1,99 @@
-version: '3.1'
-#
 services:
+  base:
+    build: bacula-base/
+    image: Bertrezen/bacula-base:15.0.2
 
   db:
-    image: fametec/bacula-catalog:11.0.5
+    build: bacula-catalog/
+    image: Bertrezen/bacula-catalog:15.0.2
     restart: unless-stopped
     environment:
       POSTGRES_PASSWORD: bacula
       POSTGRES_USER: bacula
       POSTGRES_DB: bacula
-    # volumes:
-    #   - pgdata:/var/lib/postgresql/data:rw
+    volumes:
+      - pgdata:/var/lib/postgresql/data:rw
+    networks:
+      - bacnet
     ports:
       - 5432:5432
 #
   bacula-dir:
-    image: fametec/bacula-director:11.0.5
+    build: bacula-dir/
+    image: Bertrezen/bacula-director:15.0.2
     restart: unless-stopped
     volumes:
       - ./etc:/opt/bacula/etc:ro
-    depends_on: 
-      - db      
+    depends_on:
+      - db
+    networks:
+      - bacnet
     ports:
       - 9101:9101
 #
   bacula-sd:
-    image: fametec/bacula-storage:11.0.5
+    build: bacula-sd/
+    image: Bertrezen/bacula-storage:15.0.2
     restart: unless-stopped
-    depends_on:
-      - bacula-dir
-      - db
     volumes:
       - ./etc:/opt/bacula/etc:ro
+      - /sabrent/bacula:/store:rw
+    networks:
+      - bacnet
     ports:
       - 9103:9103
 #
-  bacula-fd:
-    image: fametec/bacula-client:11.0.5
-    restart: unless-stopped
-    depends_on:
-      - bacula-sd
-      - bacula-dir
-      - db
-    volumes:
-      - ./etc:/opt/bacula/etc:ro
-    ports:
-      - 9102:9102
+#  bacula-fd:
+#    build: bacula-fd/
+#    image: Bertrezen/bacula-client:15.0.2
+#    restart: unless-stopped
+#    depends_on:
+#      - bacula-sd
+#      - bacula-dir
+#      - db
+#    volumes:
+#      - ./etc:/opt/bacula/etc:ro
+#    networks:
+#      - bacnet
+#    ports:
+#      - 9102:9102
 #
   baculum-api:
-    image: fametec/baculum-api:11.0.5
+    build: baculum-api/
+    image: Bertrezen/baculum-api:15.0.2
     restart: unless-stopped
-    depends_on: 
+    depends_on:
       - db
       - bacula-dir
     volumes:
       - ./etc/bconsole.conf:/opt/bacula/etc/bconsole.conf:ro
       - ./etc/baculum:/etc/baculum:rw
+    networks:
+      - bacnet
     ports:
       - 9096:9096
 
 #
   baculum-web:
-    image: fametec/baculum-web:11.0.5
+    build: baculum-web/
+    image: Bertrezen/baculum-web:15.0.2
     restart: unless-stopped
-    depends_on: 
+    depends_on:
       - baculum-api
     volumes:
       - ./etc/bconsole.conf:/opt/bacula/etc/bconsole.conf:ro
       - ./etc/baculum:/etc/baculum:rw
+    networks:
+      - bacnet
     ports:
       - 9095:9095
 
-# 
-#volumes: 
+#
+#volumes:
 #  pgdata:
 #
 #  gmail:
-#    image: fametec/postfix:gmail
+#    image: Bertrezen/postfix:gmail
 #    restart: unless-stopped
 #    depends_on:
 #      - bacula-dir
@@ -96,6 +113,21 @@ services:
 #    depends_on:
 #      - bacula-dir
 #
-# 
-#volumes: 
+#
+#volumes:
 #  pgdata:
+volumes:
+  pgdata:
+    name: export/docker/bacula15-pg10
+    driver: TrilliumIT/zfs:2.0
+    driver_opts:
+        compression: zstd
+        recordsize: 16k
+  webdata:
+    name: export/docker/bacula-web
+    driver: TrilliumIT/zfs:2.0
+    driver_opts:
+        compression: zstd
+networks:
+  bacnet:
+    driver: bridge
