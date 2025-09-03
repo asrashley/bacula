@@ -1,0 +1,3 @@
+[submodule "baculabackupreport"]
+	path = baculabackupreport
+	url = https://github.com/waa/baculabackupreport.git
