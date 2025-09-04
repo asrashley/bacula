@@ -65,8 +65,8 @@ if [ ! -f .env ]; then
 EOF
 fi
 
-mkdir -p logs/api logs/dir logs/web
-mkdir -p working/api working/dir working/fd working/sd working/web
+mkdir -p ./dir/working ./dir/logs
+mkdir -p ./sd/working
 mkdir -p ./api/logs/api ./api/logs/web ./api/config/api ./api/config/web
 mkdir -p ./api/assets ./api/runtime ./api/working ./working/sd
 mkdir -p ./web/logs/web ./web/assets ./web/runtime ./web/config/web

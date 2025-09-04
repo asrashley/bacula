@@ -47,8 +47,8 @@ services:
     restart: unless-stopped
     volumes:
       - ./etc:/opt/bacula/etc:ro
-      - ./working/dir:/opt/bacula/working:rw
-      - ./logs/dir:/opt/log:rw
+      - ./dir/working:/opt/bacula/working:rw
+      - ./dir/logs:/opt/log:rw
       - /Covenant/Bacula/bootstrap:/var/lib/bacula/archive:rw
     depends_on:
       - base
@@ -75,7 +75,7 @@ services:
     restart: unless-stopped
     volumes:
       - ./etc/bacula-sd.conf:/opt/bacula/etc/bacula-sd.conf:ro
-      - ./working/sd:/var/lib/bacula:rw
+      - ./sd/working:/var/lib/bacula:rw
       - /Covenant/Bacula:/store:rw
       - /restores:/restores:rw
     networks:
@@ -136,9 +136,9 @@ services:
       - base
       - bacula-dir
     volumes:
-      - ./etc:/opt/bacula/etc:ro
-      - ./working/dir:/opt/bacula/working:rw
-      - /sabrent/bacula/bootstrap:/var/lib/bacula/archive:rw
+      - ./etc/bacula-fd.conf:/opt/bacula/etc/bacula-fd.conf:ro
+      - ./dir/working:/opt/bacula/working:rw
+      - /Covenant/Bacula/bootstrap:/var/lib/bacula/archive:rw
     networks:
       - bacnet
 #
