@@ -75,8 +75,7 @@ mkdir -p ./api/logs/api ./api/logs/web ./api/config/api ./api/config/web
 mkdir -p ./api/assets ./api/runtime ./api/working ./working/sd
 sudo chown -R ${WWW_UID}:${WWW_GID} ./api/assets ./api/runtime
 
-mkdir -p ./web/logs/api ./web/logs/web ./web/assets ./web/runtime
-mkdir -p ./web/config/web ./web/config/api
+mkdir -p ./web/logs/web ./web/assets ./web/runtime ./web/config/web
 sudo chown -R ${WWW_UID}:${WWW_GID} ./web/assets ./web/logs ./web/runtime
 
 if [ ! -f api/config/api/bacularis.users ]; then
@@ -93,12 +92,6 @@ admin:$apr1$6hYFTlhE$0vj91PWcNlEjodBYuCEr9/
 EOF
 fi
 sudo chown -R ${WWW_UID}:${WWW_GID} ./api/config
-
-if [ ! -f web/config/api/bacularis.users ]; then
-    cat > web/config/api/bacularis.users <<EOF
-admin:$apr1$6hYFTlhE$0vj91PWcNlEjodBYuCEr9/
-EOF
-fi
 
 if [ ! -f web/config/web/bacularis.users ]; then
     cat > web/config/web/bacularis.users <<EOF
