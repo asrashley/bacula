@@ -17,8 +17,9 @@ name `mail.home.lan`.
 - Base image                        asrashley/bacula-base:15.0.2
 - Bacula Catalog                    asrashley/bacula-catalog:15.0.2
 - Bacula Director                   asrashley/bacula-director:15.0.2
-- Bacularis API & Storage Daemon    asrashley/bacularis-api-sd:15.0.2
+- Bacula Storage Daemon             asrashley/bacularis-sd:15.0.2
 - Bacula File Daemon                asrashley/bacula-client:15.0.2
+- Bacularis API                     asrashley/bacularis-api-sd:15.0.2
 - Bacularis Web Gui                 asrashley/bacularis-web:5.4.0-alpine
 
 ## Install Docker
@@ -37,10 +38,10 @@ You need a package key to access the Debian repositories of Bacula
 community edition. Go to https://www.bacula.org/bacula-binary-package-download/
 to register for a key.
 
-Two system accounts are needed on the Docker host. One for bacula and
-one for postgres. The [first-time-setup.sh](./first-time-setup.sh) will
-look for a user account `bacula` and an account called `postgres` or `mysql`.
-If they don't exist, it will create them.
+Three system accounts are needed on the Docker host. One for bacula,
+one for postgres and one for web daemons. The [first-time-setup.sh](./first-time-setup.sh)
+script will look for a user account `bacula`, an account called `postgres` or `mysql`
+and an account called `www-data` or `nginx`. If they don't exist, it will create them.
 
 ```sh
 cd docker
@@ -58,12 +59,15 @@ BACULA_GID=126
 BACULA_UID=116
 PG_GID=124
 PG_UID=124
+WWW_GID=33
+WWW_UID=33
 EMAIL=ubuntu
 ```
 
 ## Build the containers
 
 ```sh
+docker compose build base
 docker compose build
 ```
 
@@ -86,8 +90,8 @@ The web UI will need a user account to be created `http://localhost:9097/page,AP
 in the API host that is used by the web host.
 
 After setting up the API, go to `http://localhost:9098/' to perform the setup
-process for the Bacularis UI.
-
+process for the Bacularis UI. Use the hostname `bacula-api` for the connection to the
+Bacularis API service.
 
 ## Creating backup clients
 
@@ -119,7 +123,7 @@ Job {
 
 ```
 
-The matching `Director` entry in `bacula-fd.conf`nthat is put on the client device:
+The matching `Director` entry in `bacula-fd.conf` that is put on the client device:
 
 ```
 Director {
