@@ -83,13 +83,13 @@ docker compose up -d
 If all goes well, all of the services will start and a new database will have
 been created in the `bacula-db` container.
 
-The API host should now be available on `http://localhost:9097/'. The default
+The API host should now be available on http://localhost:9097/. The default
 username is `admin` with password `admin`.
 
-The web UI will need a user account to be created `http://localhost:9097/page,APIBasicUsers`
-in the API host that is used by the web host.
+The web UI will need a user account to be created in the API host that is used by the web host
+using http://localhost:9097/page,APIBasicUsers
 
-After setting up the API, go to `http://localhost:9098/' to perform the setup
+After setting up the API, go to http://localhost:9098/ to perform the setup
 process for the Bacularis UI. Use the hostname `bacula-api` for the connection to the
 Bacularis API service.
 
