@@ -24,3 +24,5 @@ RUN sed -i "s/^bacula:x:102:/bacula:x:${BACULA_GID}:/" /etc/group
 RUN sed -i "s/^postgres:x:105:/postgres:x:${PG_GID}:/" /etc/group
 RUN sed -i "s/^bacula:x:100:102:/bacula:x:${BACULA_UID}:${BACULA_GID}:/" /etc/passwd
 RUN sed -i "s/^postgres:x:102:105:/postgres:x:${PG_UID}:${PG_GID}:/" /etc/passwd
+
+RUN mkdir -p /run/bacula

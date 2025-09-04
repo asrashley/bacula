@@ -66,17 +66,10 @@ EOF
 fi
 
 mkdir -p logs/api logs/dir logs/web
-sudo chown -R bacula:bacula logs
-
 mkdir -p working/api working/dir working/fd working/sd working/web
-sudo chown -R bacula:bacula working
-
 mkdir -p ./api/logs/api ./api/logs/web ./api/config/api ./api/config/web
 mkdir -p ./api/assets ./api/runtime ./api/working ./working/sd
-sudo chown -R ${WWW_UID}:${WWW_GID} ./api/assets ./api/runtime
-
 mkdir -p ./web/logs/web ./web/assets ./web/runtime ./web/config/web
-sudo chown -R ${WWW_UID}:${WWW_GID} ./web/assets ./web/logs ./web/runtime
 
 if [ ! -f api/config/api/bacularis.users ]; then
     # username=admin password=admin
@@ -91,7 +84,6 @@ if [ ! -f ./api/config/web/bacularis.users ]; then
 admin:$apr1$6hYFTlhE$0vj91PWcNlEjodBYuCEr9/
 EOF
 fi
-sudo chown -R ${WWW_UID}:${WWW_GID} ./api/config
 
 if [ ! -f web/config/web/bacularis.users ]; then
     cat > web/config/web/bacularis.users <<EOF
@@ -99,4 +91,4 @@ admin:$apr1$6hYFTlhE$0vj91PWcNlEjodBYuCEr9/
 EOF
 fi
 
-sudo chown -R ${WWW_UID}:${WWW_GID} ./web/config
+sudo ./update-permissions.sh
