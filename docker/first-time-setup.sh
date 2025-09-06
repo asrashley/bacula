@@ -26,29 +26,39 @@ if [ ! -f .env ]; then
     if [ -z "${BACULA_GID}" ]; then
         sudo addgroup --system bacula
         BACULA_GID=$(cat /etc/group | grep ^bacula | cut -d: -f3)
+        echo "Created bacula group GID=${BACULA_GID}"
     fi
     if [ -z "${BACULA_UID}" ]; then
         sudo adduser --system --no-create-home --gid ${BACULA_GID} bacula
-        BACULA_GID=$(cat /etc/passwd | grep ^bacula | cut -d: -f3)
+        BACULA_UID=$(cat /etc/passwd | grep ^bacula | cut -d: -f3)
+        echo "Created bacula user UID=${BACULA_UID}"
     fi
 
     if [ -z "${PG_GID}" ]; then
         sudo addgroup --system postgres
         PG_GID=$(cat /etc/group | grep ^postgres | cut -d: -f3)
+        echo "Created postgres group GID=${PG_GID}"
     fi
     if [ -z "${PG_UID}" ]; then
         sudo adduser --system --no-create-home --gid ${PG_GID} postgres
         PG_UID=$(cat /etc/passwd | grep ^postgres | cut -d: -f3)
+        echo "Created postgres user UID=${PG_UID}"
     fi
 
     if [ -z "${WWW_GID}" ]; then
         sudo addgroup --system www-data
         WWW_GID=$(cat /etc/group | grep ^www-data | cut -d: -f3)
+        echo "Created www-data group GID=${WWW_GID}"
     fi
     if [ -z "${WWW_UID}" ]; then
-        sudo adduser --system --no-create-home --gid ${PG_GID} www-data
-        PG_UID=$(cat /etc/passwd | grep ^www-data | cut -d: -f3)
+        sudo adduser --system --no-create-home --gid ${WWW_GID} www-data
+        WWW_UID=$(cat /etc/passwd | grep ^www-data | cut -d: -f3)
+        echo "Created www-data user UID=${WWW_UID}"
     fi
+
+    HOSTNAME=$(cat /etc/hostname)
+    HOST_IP=$(dig +noall +answer ${HOSTNAME} | awk '/IN\s+A/ { print $5; exit }')
+    DNS_SEARCH=$(cat /etc/resolv.conf | awk '/^search / { print $2 }')
 
     cat > .env <<EOF
     BACULA_KEY=$1
@@ -59,9 +69,10 @@ if [ ! -f .env ]; then
     PG_UID=${PG_UID}
     WWW_GID=${WWW_GID}
     WWW_UID=${WWW_UID}
-    EMAIL=${USER}
+    EMAIL="${USER}@${DNS_SEARCH}"
+    HOST_IP="${HOST_IP}"
     DNS_SERVER="8.8.8.8"
-    DNS_SEARCH="home.local"
+    DNS_SEARCH=${DNS_SEARCH}
 EOF
 fi
 

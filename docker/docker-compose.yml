@@ -85,7 +85,7 @@ services:
     dns_search: 
       - ${DNS_SEARCH}
     ports:
-      - 192.168.96.1:9103:9103/tcp
+      - ${HOST_IP}:9103:9103/tcp
 #
   bacula-api:
     build:
@@ -174,7 +174,7 @@ services:
     dns: ${DNS_SERVER}
     dns_search: ${DNS_SEARCH}
     ports:
-      - 192.168.96.1:9098:9097/tcp
+      - ${HOST_IP}:9098:9097/tcp
 volumes:
   pgdata:
     name: bacula15-pg10
