@@ -84,22 +84,17 @@ mkdir -p ./web/logs/web ./web/assets ./web/runtime ./web/config/web
 
 if [ ! -f api/config/api/bacularis.users ]; then
     # username=admin password=admin
-    cat > api/config/api/bacularis.users <<EOF
-admin:$apr1$6hYFTlhE$0vj91PWcNlEjodBYuCEr9/
-EOF
+    echo 'admin:$apr1$6hYFTlhE$0vj91PWcNlEjodBYuCEr9/' > api/config/api/bacularis.users
 fi
 
 if [ ! -f ./api/config/web/bacularis.users ]; then
     # username=admin password=admin
-    cat > ./api/config/web/bacularis.users <<EOF
-admin:$apr1$6hYFTlhE$0vj91PWcNlEjodBYuCEr9/
-EOF
+    echo 'admin:$apr1$6hYFTlhE$0vj91PWcNlEjodBYuCEr9/' > api/config/web/bacularis.users
 fi
 
 if [ ! -f web/config/web/bacularis.users ]; then
-    cat > web/config/web/bacularis.users <<EOF
-admin:$apr1$6hYFTlhE$0vj91PWcNlEjodBYuCEr9/
-EOF
+    # username=admin password=admin
+    echo 'admin:$apr1$6hYFTlhE$0vj91PWcNlEjodBYuCEr9/' > web/config/web/bacularis.users
 fi
 
 sudo ./update-permissions.sh
