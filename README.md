@@ -61,7 +61,10 @@ PG_GID=124
 PG_UID=124
 WWW_GID=33
 WWW_UID=33
-EMAIL=ubuntu
+EMAIL="ubuntu@home.lan"
+HOST_IP="192.168.2.3"
+DNS_SERVER="8.8.8.8"
+DNS_SEARCH=home.lan
 ```
 
 ## Build the containers
