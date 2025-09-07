@@ -89,12 +89,142 @@ been created in the `bacula-db` container.
 The API host should now be available on http://localhost:9097/. The default
 username is `admin` with password `admin`.
 
-The web UI will need a user account to be created in the API host that is used by the web host
-using http://localhost:9097/page,APIBasicUsers
+## Bacularis API First Time Setup
 
-After setting up the API, go to http://localhost:9098/ to perform the setup
-process for the Bacularis UI. Use the hostname `bacula-api` for the connection to the
-Bacularis API service.
+Use the configuration wizard to perform first time setup, and then use the
+"Basic users" page to add a user account that will be used by the bacula-web.
+
+### Step 1 - general options
+
+`[*]` Enable API instance
+
+`[*]` Enable web interface
+
+`[*]` Yes. I already have Bacula component(s) installed on this host
+
+Click `Next >`
+
+### Step 2 - share the Bacula Catalog Database
+
+Database type: `PostgreSQL`
+
+Database name: `bacula`
+
+Login: `bacula`
+
+Password: `bacula`
+
+IP address (or hostname): `bacula-db`
+
+Port: `5432`
+
+Click `> test` to check the settings are correct
+
+You should get `OK` confirmation
+
+Click `Next >`
+
+### Step 3 - share the Bacula Bconsole commands interface
+
+Bconsole binary file path: `/usr/sbin/bconsole`
+
+Bconsole admin config file path: `/etc/bacula/bconsole.conf`
+
+Use sudo: `no`
+
+Click `> test` to check the settings are correct
+
+You should get `OK` confirmation
+
+Click `Next >`
+
+### Step 4 - share the Bacula configuration interface
+
+Do you want to setup the Bacula configuration interface?: `yes`
+
+Bacularis working directory for Bacula config: `/var/www/bacularis/protected/vendor/bacularis/bacularis-api/API/Config`
+
+Use sudo: `no`
+
+**Director**
+
+bdirjson binary file path: `/usr/sbin/bdirjson`
+
+Main Director config file path: `/etc/bacula/bacula-dir.conf`
+
+**Storage Daemon**
+
+bsdjson binary file path: `/usr/sbin/bsdjson`
+
+Main Storage Daemon config file path: `/etc/bacula/bacula-sd.conf`
+
+**File Daemon/Client**
+
+bfdjson binary file path: `/usr/sbin/bfdjson`
+
+Main File Daemon config file path: `/etc/bacula/bacula-fd.conf`
+
+**Bconsole**
+
+bbconsjson binary file path: `/usr/sbin/bbconsjson`
+
+Admin Bconsole config file path: `/etc/bacula/bconsole.conf`
+
+Click `> Test configuration` to check the settings are correct
+
+You should get `OK` confirmation
+
+Click `Next >`
+
+### Step 5 - authentication
+
+`[ ]` Use OAuth2 for authorization and authentication
+
+`[*]` Use HTTP Basic authentication
+
+Choose a username and password for the admin account.
+
+Click `Next >`
+
+Click `Save`
+
+The API service will now ask the admin username and password that was just created.
+
+## Bacularis Web First Time Setup
+
+After setting up the API, go to http://localhost:9098/page,WebConfigWizard
+
+### Step 1 - select language
+
+Click `Next >`
+
+### Step 2 - add API instances
+
+Protocol: `HTTP`
+
+IP Address/Hostname: `bacula-api`
+
+`[ ]` Use OAuth2 for authorization and authentication
+
+`[*]` Use HTTP Basic authentication
+
+Enter the username and password from step 5 of the API setup.
+
+Click `> test` to check the settings are correct
+
+You should get `OK` confirmation
+
+Click `Next >`
+
+Click `Save`
+
+Ignore the error about an invalid director. Log out using the power icon on
+the top left corner of the page.
+
+Log in again. The "invalid director" message should now be gone and Bacularis
+should now be fully working.
+
+![Screen-shot of running Bacularis-web](./images/bacularis-web.png)
 
 ## Creating backup clients
 
