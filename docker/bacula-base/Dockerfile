@@ -9,9 +9,11 @@ ARG EMAIL
 
 ENV DEBIAN_VERSION=bookworm
 
-RUN apt-get update && apt-get install -y curl ca-certificates wget gnupg2 \
-       && wget https://www.bacula.org/downloads/Bacula-4096-Distribution-Verification-key.asc \
-       && apt-key add Bacula-4096-Distribution-Verification-key.asc
+RUN apt-get update \
+    && apt-get install -y curl ca-certificates wget gnupg2 procps \
+    && wget https://www.bacula.org/downloads/Bacula-4096-Distribution-Verification-key.asc \
+    && apt-key add Bacula-4096-Distribution-Verification-key.asc \
+    && rm Bacula-4096-Distribution-Verification-key.asc
 
 COPY bacula-community.repo /etc/apt/sources.list.d/Bacula-Community.list
 
@@ -20,9 +22,11 @@ RUN sed -i s/BACULA_KEY/$(echo $BACULUA_KEY)/g /etc/apt/sources.list.d/Bacula-Co
     && sed -i s/DEBIAN_VERSION/$(echo $DEBIAN_VERSION)/g /etc/apt/sources.list.d/Bacula-Community.list \
     && apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y postgresql postgresql-client bacula-postgresql
 
-RUN sed -i "s/^bacula:x:102:/bacula:x:${BACULA_GID}:/" /etc/group
-RUN sed -i "s/^postgres:x:105:/postgres:x:${PG_GID}:/" /etc/group
-RUN sed -i "s/^bacula:x:100:102:/bacula:x:${BACULA_UID}:${BACULA_GID}:/" /etc/passwd
-RUN sed -i "s/^postgres:x:102:105:/postgres:x:${PG_UID}:${PG_GID}:/" /etc/passwd
+RUN sed -i "s/^bacula:x:102:/bacula:x:${BACULA_GID}:/" /etc/group \
+    && sed -i "s/^postgres:x:105:/postgres:x:${PG_GID}:/" /etc/group \
+    && sed -i "s/^bacula:x:100:102:/bacula:x:${BACULA_UID}:${BACULA_GID}:/" /etc/passwd \
+    && sed -i "s/^postgres:x:102:105:/postgres:x:${PG_UID}:${PG_GID}:/" /etc/passwd
 
-RUN mkdir -p /run/bacula
+RUN mkdir -p /run/bacula /var/lib/bacula /opt/bacula/etc \
+    && chown bacula:bacula /run/bacula /var/lib/bacula /opt/bacula/etc
+
