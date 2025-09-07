@@ -45,18 +45,21 @@ services:
         BACULA_UID: ${BACULA_UID}
     image: asrashley/bacula-director:15.0.2
     restart: unless-stopped
+    environment:
+      BACULA_EMAIL: ${EMAIL}
+    user: ${BACULA_UID}:${BACULA_GID}
     volumes:
       - ./etc:/opt/bacula/etc:ro
-      - ./dir/working:/opt/bacula/working:rw
-      - ./dir/logs:/opt/log:rw
-      - /Covenant/Bacula/bootstrap:/var/lib/bacula/archive:rw
+      - ./dir/working:/opt/bacula/working
+      - ./dir/logs:/opt/bacula/log
+      - ./dir/run:/run/bacula
+      - ./dir/var:/var/lib/bacula
+      - /Covenant/Bacula/bootstrap:/var/lib/bacula/archive
     depends_on:
       - base
       - bacula-db
     networks:
       - bacnet
-    links:
-      - bacula-db
     dns: ${DNS_SERVER}
     dns_search: ${DNS_SEARCH}
     domainname: bacula-dir
@@ -70,17 +73,21 @@ services:
         BACULA_GID: ${BACULA_GID}
         BACULA_UID: ${BACULA_UID}
     image: asrashley/bacularis-sd:15.0.2
+    user: ${BACULA_UID}:${BACULA_GID}
     depends_on:
       - base
     restart: unless-stopped
+    environment:
+      BACULA_EMAIL: ${EMAIL}
     volumes:
-      - ./etc/bacula-sd.conf:/opt/bacula/etc/bacula-sd.conf:ro
+      - ./etc:/opt/bacula/etc:ro
       - ./sd/working:/var/lib/bacula:rw
       - /Covenant/Bacula:/store:rw
       - /restores:/restores:rw
     networks:
       - bacnet
-    dns: 
+    domainname: bacula-sd
+    dns:
       - ${DNS_SERVER}
     dns_search: 
       - ${DNS_SEARCH}
@@ -114,13 +121,11 @@ services:
       - ./api/working:/var/lib/bacula:rw
     networks:
       - bacnet
-    dns: 
+    domainname: bacula-api
+    dns:
       - ${DNS_SERVER}
     dns_search: 
       - ${DNS_SEARCH}
-    links:
-      - bacula-db
-      - bacula-sd
     ports:
       - 9097:9097/tcp
 #
@@ -132,9 +137,12 @@ services:
         BACULA_UID: ${BACULA_UID}
     image: asrashley/bacula-client:15.0.2
     restart: unless-stopped
+    environment:
+      BACULA_EMAIL: ${EMAIL}
     depends_on:
       - base
       - bacula-dir
+      - bacula-sd
     volumes:
       - ./etc/bacula-fd.conf:/opt/bacula/etc/bacula-fd.conf:ro
       - ./dir/working:/opt/bacula/working:rw
@@ -167,10 +175,6 @@ services:
       - ./web/logs/api:/var/www/bacularis/protected/vendor/bacularis/bacularis-api/API/Logs:rw
     networks:
       - bacnet
-    links:
-      - bacula-db
-      - bacula-dir
-      - bacula-sd
     dns: ${DNS_SERVER}
     dns_search: ${DNS_SEARCH}
     ports:
