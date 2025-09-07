@@ -1,4 +1,6 @@
-FROM bacularis/bacularis-api-sd:5.4.0-alpine
+ARG BACULARIS_VERSION
+FROM bacularis/bacularis-api-sd:${BACULARIS_VERSION:-5.6.0}-alpine
+
 ARG BACULA_GID
 ARG BACULA_UID
 ARG WWW_GID
@@ -11,4 +13,6 @@ RUN sed --in-place "s/^nginx:x:100:101:nginx:/nginx:x:${WWW_UID}:${WWW_GID}:ngin
 RUN apk add curl
 
 COPY --chown=root:root docker-entrypoint.sh /
-RUN chmod +x /docker-entrypoint.sh
+
+RUN chmod +x /docker-entrypoint.sh \
+    && chown -R ${WWW_UID}:${WWW_GID} /var/www/bacularis/htdocs/assets /var/www/bacularis/protected/runtime

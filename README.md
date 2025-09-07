@@ -1,4 +1,4 @@
-# Bacula 15.0.2 using Docker containers
+# Bacula 15.0.3 using Docker containers
 
 Deploys the bacula community edition using Docker Containers.
 
@@ -14,13 +14,13 @@ name `mail.home.lan`.
 
 ## Images
 
-- Base image                        asrashley/bacula-base:15.0.2
-- Bacula Catalog                    asrashley/bacula-catalog:15.0.2
-- Bacula Director                   asrashley/bacula-director:15.0.2
-- Bacula Storage Daemon             asrashley/bacularis-sd:15.0.2
-- Bacula File Daemon                asrashley/bacula-client:15.0.2
-- Bacularis API                     asrashley/bacularis-api-sd:15.0.2
-- Bacularis Web Gui                 asrashley/bacularis-web:5.4.0-alpine
+- Base image                        asrashley/bacula-base:15.0.3
+- Bacula Catalog                    asrashley/bacula-catalog:15.0.3
+- Bacula Director                   asrashley/bacula-director:15.0.3
+- Bacula Storage Daemon             asrashley/bacularis-sd:15.0.3
+- Bacula File Daemon                asrashley/bacula-client:15.0.3
+- Bacularis API                     asrashley/bacularis-api-sd:15.0.3
+- Bacularis Web Gui                 asrashley/bacularis-web:5.6.0-alpine
 
 ## Install Docker
 
@@ -54,7 +54,7 @@ The script will create a `.env` file that looks a bit like this:
 
 ```
 BACULA_KEY=123456789abcd
-BACULA_VERSION=15.0.2
+BACULA_VERSION=15.0.3
 BACULA_GID=126
 BACULA_UID=116
 PG_GID=124

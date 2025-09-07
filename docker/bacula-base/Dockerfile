@@ -1,12 +1,12 @@
 FROM debian:bookworm
-ARG BACULA_VERSION="15.0.2"
+ARG BACULA_VERSION
 ARG BACULA_KEY
 ARG BACULA_GID
 ARG BACULA_UID
 ARG PG_GID
 ARG PG_UID
-ARG EMAIL
 
+ENV BACULA_EMAIL="bacula@local"
 ENV DEBIAN_VERSION=bookworm
 
 RUN apt-get update \
@@ -28,5 +28,5 @@ RUN sed -i "s/^bacula:x:102:/bacula:x:${BACULA_GID}:/" /etc/group \
     && sed -i "s/^postgres:x:102:105:/postgres:x:${PG_UID}:${PG_GID}:/" /etc/passwd
 
 RUN mkdir -p /run/bacula /var/lib/bacula /opt/bacula/etc \
-    && chown bacula:bacula /run/bacula /var/lib/bacula /opt/bacula/etc
+    && chown -R ${BACULA_UID}:${BACULA_GID} /run/bacula /var/lib/bacula /opt/bacula/etc /opt/bacula/log
 
