@@ -1,6 +1,6 @@
+api
+dir
 sd
-etc/baculum/Config-web-apache/session.dump
+web
+etc/baculum
 .env
-config/api/bacularis.users
-config/web/hosts.conf
-config/web/bacularis.users

@@ -117,10 +117,10 @@ services:
     volumes:
       - ./etc:/etc/bacula:rw
       - ./etc:/opt/bacula/etc:rw
+      - ./api/config:/var/www/bacularis/protected/vendor/bacularis/bacularis-api/API/Config:rw
+      - ./web/config:/var/www/bacularis/protected/vendor/bacularis/bacularis-web/Web/Config:rw
       - ./api/logs/api:/var/www/bacularis/protected/vendor/bacularis/bacularis-api/API/Logs:rw
-      - ./api/config/api:/var/www/bacularis/protected/vendor/bacularis/bacularis-api/API/Config:rw
-      - ./api/empty:/var/www/bacularis/protected/vendor/bacularis/bacularis-web/Web/Logs:rw
-      - ./api/empty:/var/www/bacularis/protected/vendor/bacularis/bacularis-web/Web/Config:rw
+      - ./api/logs/web:/var/www/bacularis/protected/vendor/bacularis/bacularis-web/Web/Logs:rw
       - ./api/working:/var/www/bacularis/protected/vendor/bacularis/bacularis-common/Common/Working:rw
       - ./api/working:/var/lib/bacula:rw
     networks:
@@ -172,9 +172,9 @@ services:
       - bacula-api
     volumes:
       - ./etc:/etc/bacula:rw
-      - ./web/config/web:/var/www/bacularis/protected/vendor/bacularis/bacularis-web/Web/Config:rw
-      - ./web/config/api:/var/www/bacularis/protected/vendor/bacularis/bacularis-api/API/Config:rw
-      - ./web/config/web:/var/www/bacularis/protected/Web/Config:rw
+      - ./api/config:/var/www/bacularis/protected/vendor/bacularis/bacularis-api/API/Config:rw
+      - ./web/config:/var/www/bacularis/protected/vendor/bacularis/bacularis-web/Web/Config:rw
+      - ./web/config:/var/www/bacularis/protected/Web/Config:rw
       - ./web/working:/var/www/bacularis/protected/vendor/bacularis/bacularis-common/Common/Working
       - ./web/logs/web:/var/www/bacularis/protected/vendor/bacularis/bacularis-web/Web/Logs:rw
       - ./web/logs/api:/var/www/bacularis/protected/vendor/bacularis/bacularis-api/API/Logs:rw

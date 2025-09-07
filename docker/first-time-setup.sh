@@ -79,31 +79,26 @@ fi
 
 mkdir -p ./dir/working ./dir/logs ./dir/run ./dir/var
 mkdir -p ./sd/working
-mkdir -p ./api/logs/api ./api/logs/web ./api/config/api ./api/config/web
-mkdir -p ./api/assets ./api/runtime ./api/working ./working/sd
-mkdir -p ./web/logs/web ./web/assets ./web/runtime ./web/config/web
+mkdir -p ./api/logs/api ./api/logs/web ./api/config
+mkdir -p ./api/working ./working/sd
+mkdir -p ./web/logs/api ./web/logs/web ./web/assets ./web/runtime ./web/config
 
-if [ ! -f api/config/api/bacularis.users ]; then
-    # username=admin password=admin
-    echo 'admin:$apr1$6hYFTlhE$0vj91PWcNlEjodBYuCEr9/' > api/config/api/bacularis.users
-fi
-
-if [ ! -f api/config/api/basic.conf ]; then
-    cat > api/config/api/basic.conf <<EOF
+if [ ! -f api/config/basic.conf ]; then
+    cat > api/config/basic.conf <<EOF
 [admin]
 bconsole_cfg_path = ""
 
 EOF
 fi
 
-if [ ! -f ./api/config/web/bacularis.users ]; then
+if [ ! -f ./api/config/bacularis.users ]; then
     # username=admin password=admin
-    echo 'admin:$apr1$6hYFTlhE$0vj91PWcNlEjodBYuCEr9/' > api/config/web/bacularis.users
+    echo 'admin:$apr1$6hYFTlhE$0vj91PWcNlEjodBYuCEr9/' > api/config/bacularis.users
 fi
 
-if [ ! -f web/config/web/bacularis.users ]; then
+if [ ! -f web/config/bacularis.users ]; then
     # username=admin password=admin
-    echo 'admin:$apr1$6hYFTlhE$0vj91PWcNlEjodBYuCEr9/' > web/config/web/bacularis.users
+    echo 'admin:$apr1$6hYFTlhE$0vj91PWcNlEjodBYuCEr9/' > web/config/bacularis.users
 fi
 
-sudo ./update-permissions.sh
+REAL_USER=${USER} sudo ./update-permissions.sh
