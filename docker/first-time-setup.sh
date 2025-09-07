@@ -87,6 +87,14 @@ if [ ! -f api/config/api/bacularis.users ]; then
     echo 'admin:$apr1$6hYFTlhE$0vj91PWcNlEjodBYuCEr9/' > api/config/api/bacularis.users
 fi
 
+if [ ! -f api/config/api/basic.conf ]; then
+    cat > api/config/api/basic.conf <<EOF
+[admin]
+bconsole_cfg_path = ""
+
+EOF
+fi
+
 if [ ! -f ./api/config/web/bacularis.users ]; then
     # username=admin password=admin
     echo 'admin:$apr1$6hYFTlhE$0vj91PWcNlEjodBYuCEr9/' > api/config/web/bacularis.users
