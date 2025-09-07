@@ -62,7 +62,8 @@ if [ ! -f .env ]; then
 
     cat > .env <<EOF
     BACULA_KEY=$1
-    BACULA_VERSION=15.0.2
+    BACULA_VERSION=15.0.3
+    BACULARIS_VERSION=5.6.0
     BACULA_GID=${BACULA_GID}
     BACULA_UID=${BACULA_UID}
     PG_GID=${PG_GID}

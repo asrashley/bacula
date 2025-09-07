@@ -1,13 +1,9 @@
-FROM asrashley/bacula-base:15.0.2
+ARG BACULA_VERSION
+FROM asrashley/bacula-base:${BACULA_VERSION:-15.0.3}
 
-ARG BACULA_GID
-ARG BACULA_UID
+ENV BACULA_EMAIL="bacula@local"
 
 VOLUME ["/opt/bacula/etc", "/var/lib/bacula"]
-
-RUN groupmod --gid ${BACULA_GID} bacula \
-    && usermod --uid $BACULA_UID --gid $BACULA_GID bacula
-RUN mkdir -p /run/bacula && chown bacula /run/bacula
 
 ENTRYPOINT ["/opt/bacula/bin/bacula-fd"]
 

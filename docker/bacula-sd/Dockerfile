@@ -1,6 +1,7 @@
-FROM asrashley/bacula-base:15.0.2
-ARG BACULA_GID
-ARG BACULA_UID
+ARG BACULA_VERSION
+FROM asrashley/bacula-base:${BACULA_VERSION:-15.0.3}
+
+ENV BACULA_EMAIL="bacula@local"
 
 VOLUME ["/opt/bacula/etc"]
 
