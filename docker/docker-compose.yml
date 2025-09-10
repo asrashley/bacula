@@ -149,7 +149,7 @@ services:
       - bacula-dir
       - bacula-sd
     volumes:
-      - ./etc/bacula-fd.conf:/opt/bacula/etc/bacula-fd.conf:ro
+      - ./etc:/opt/bacula/etc:ro
       - ./dir/working:/opt/bacula/working:rw
       - /Covenant/Bacula/bootstrap:/var/lib/bacula/archive:rw
     networks:
