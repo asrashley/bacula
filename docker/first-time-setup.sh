@@ -1,4 +1,9 @@
 #!/bin/bash
+
+function random_password() {
+    echo $(python3 -c 'import secrets; print(secrets.token_urlsafe(24))')
+}
+
 BACULA_GID=$(cat /etc/group | grep ^bacula | cut -d: -f3)
 BACULA_UID=$(cat /etc/passwd | grep ^bacula | cut -d: -f3)
 
@@ -82,6 +87,7 @@ mkdir -p ./sd/working
 mkdir -p ./api/logs/api ./api/logs/web ./api/config
 mkdir -p ./api/working ./working/sd
 mkdir -p ./web/logs/api ./web/logs/web ./web/assets ./web/runtime ./web/config
+mkdir -p ./etc/private
 
 if [ ! -f api/config/basic.conf ]; then
     cat > api/config/basic.conf <<EOF
@@ -99,6 +105,19 @@ fi
 if [ ! -f web/config/bacularis.users ]; then
     # username=admin password=admin
     echo 'admin:$apr1$6hYFTlhE$0vj91PWcNlEjodBYuCEr9/' > web/config/bacularis.users
+fi
+
+if [ ! -f ./etc/private/console.pass ]; then
+    echo $(random_password) > ./etc/private/console.pass
+fi
+if [ ! -f ./etc/private/monitor.pass ]; then
+    echo $(random_password) > ./etc/private/monitor.pass
+fi
+if [ ! -f ./etc/private/fd.pass ]; then
+    echo $(random_password) > ./etc/private/fd.pass
+fi
+if [ ! -f ./etc/private/sd.pass ]; then
+    echo $(random_password) > ./etc/private/sd.pass
 fi
 
 REAL_USER=${USER} sudo ./update-permissions.sh
